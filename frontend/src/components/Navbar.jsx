@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaUser, FaUserMd, FaBolt } from 'react-icons/fa';
+import { FaHome, FaUser, FaUserMd, FaBolt,FaHospital }  from 'react-icons/fa';
 import './NavBar.css';
 import { useUser } from '../context/UserContext';
 
@@ -13,7 +13,9 @@ function NavBar() {
     ...(user?.role === 'hospital'
       ? [{ path: '/hospitalstaff', label: 'Hospital Staff', icon: <FaUserMd /> }]
       : []),
-    { path: '/driver', label: 'Ambulance', icon: <FaBolt /> },
+    { path: '/ambulance', label: 'Ambulance', icon: <FaBolt /> },
+    { path: '/hospital', label: 'Hospital', icon: <FaHospital /> },
+
   ];
 
   return (

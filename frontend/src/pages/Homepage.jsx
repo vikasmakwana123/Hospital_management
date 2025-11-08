@@ -12,10 +12,10 @@ const Homepage = () => {
           <h1>Your Health Journey Starts Here</h1>
           <p>Access quality healthcare services, find nearby hospitals, book ambulances, and manage your medical records all in one place.</p>
           <div className="hero-buttons">
-            <Link to="/find-hospitals" className="btn btn-primary">
+            <Link to="/hospital" className="btn btn-primary">
               <i className="fas fa-hospital"></i> Find Hospitals
             </Link>
-            <Link to="/book-ambulance" className="btn btn-secondary">
+            <Link to="/ambulance" className="btn btn-secondary">
               <i className="fas fa-ambulance"></i> Book Ambulance
             </Link>
           </div>
@@ -30,7 +30,7 @@ const Homepage = () => {
           </div>
           <h3>Book Appointment</h3>
           <p>Schedule a visit with our specialists</p>
-          <Link to="/book-appointment" className="service-button">Book Now</Link>
+          <Link to="/hospital" className="service-button">Book Now</Link>
         </div>
 
         <div className="service-card">
