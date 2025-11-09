@@ -7,15 +7,24 @@ function NavBar() {
   const location = useLocation();
   const { user, logout } = useUser();
 
+  // Normalize role checks to be defensive against different shapes / casing
+  const userRole = (() => {
+    if (!user) return null;
+    if (typeof user === 'string') return user.toLowerCase();
+    if (typeof user.role === 'string') return user.role.toLowerCase();
+    // if roles is an array
+    if (Array.isArray(user.roles) && user.roles.length) return String(user.roles[0]).toLowerCase();
+    return null;
+  })();
+
   const navItems = [
     { path: '/', label: 'Home', icon: <FaHome /> },
     { path: '/patient', label: 'Patient', icon: <FaUser /> },
-    ...(user?.role === 'hospital'
+    ...(userRole === 'hospital'
       ? [{ path: '/hospitalstaff', label: 'Hospital Staff', icon: <FaUserMd /> }]
       : []),
     { path: '/ambulance', label: 'Ambulance', icon: <FaBolt /> },
     { path: '/hospital', label: 'Hospital', icon: <FaHospital /> },
-
   ];
 
   return (

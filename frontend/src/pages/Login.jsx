@@ -38,16 +38,25 @@ const Login = () => {
       return;
     }
 
-    // Simulate login success
-    const userData = {
-      email,
-      role: 'hospital' // ✅ Add role for protected routes
-    };
-
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData); // ✅ Update context
-    toast.success('Login successful!');
-    navigate('/');
+    // Call backend
+    fetch('http://localhost:4000/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Login failed');
+        const userData = data.user;
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        toast.success('Login successful!');
+        navigate('/');
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error(err.message || 'Login failed');
+      });
   };
 
   return (

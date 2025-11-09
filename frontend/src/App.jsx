@@ -13,6 +13,7 @@ import HospitalStaff from './pages/HospitalStaff';
 import HospitalList from './pages/HospitalList.jsx';
 import Appointment from './pages/Appointment.jsx';
 import Ambulance from './pages/Ambulance.jsx';
+import HospitalSignup from './Hospital&drivers/HospitalSignup.jsx';
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
   <Route path="/appointment/:id" element={<Appointment />} />
   <Route path="/signup" element={<Signup />} />
   <Route path="/login" element={<Login />} />
+  <Route path="/signup/hospitaldriver"element={<HospitalSignup/>}/>
 </Routes>
 </Router>
 

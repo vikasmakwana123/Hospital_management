@@ -86,10 +86,22 @@ const Signup = () => {
       return;
     }
 
-    // Simulate signup success
-    toast.success('Signup successful!');
-    // Navigate to login or homepage
-    navigate('/login');
+    // Submit to backend
+    fetch('http://localhost:4000/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Signup failed');
+        toast.success('Signup successful! Please login.');
+        navigate('/login');
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error(err.message || 'Signup failed');
+      });
   };
 
   return (

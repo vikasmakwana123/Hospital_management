@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePatient } from '../context/PatientContext';
+import { useUser } from '../context/UserContext';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { fetchWithErrorHandling } from '../utils/api';
 
 const PatientCard = () => {
   const { patient, setPatient } = usePatient();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(patient);
-  const [appointment, setAppointment] = useState(false);
+  const [appointmentView, setAppointmentView] = useState(false);
+  const { user } = useUser();
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    setFormData(patient);
+  }, [patient]);
+
+  useEffect(() => {
+    async function loadUserData() {
+      if (!user || !user.id) return;
+      try {
+        const data = await fetchWithErrorHandling(`/api/users/${user.id}`);
+        // Ensure appointments exists
+        data.appointments = data.appointments || [];
+        setUserData(data);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        toast.error(err.message);
+      }
+    }
+    loadUserData();
+  }, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,18 +48,19 @@ const PatientCard = () => {
     setPatient(updatedPatient);
     setFormData(updatedPatient);
     setIsEditing(false);
+    toast.success('Profile updated (local only).');
   };
 
-  const initials = patient.name
+  const displayName = (userData && userData.fullName) || patient.name;
+  const initials = displayName
     .split(' ')
-    .map((word) => word[0])
+    .map((word) => word[0] || '')
     .join('')
     .toUpperCase();
 
   return (
     <>
       <div className="flex flex-col bg-gray-100 m-10 pt-6 border-gray-500 border-[1px] rounded-2xl min-h-screen">
-        {/* Profile Section */}
         <div className="w-[90%] mx-auto bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl shadow-lg p-6 relative">
           <div className="absolute top-4 right-4">
             {!isEditing ? (
@@ -58,12 +85,11 @@ const PatientCard = () => {
               {initials}
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{patient.name}</h2>
-              <p className="text-sm">Patient ID: {patient.id || 'PT-89329'}</p>
+              <h2 className="text-2xl font-bold">{displayName}</h2>
+              <p className="text-sm">Patient ID: {(userData && userData.id) || patient.id || 'PT-89329'}</p>
             </div>
           </div>
 
-          {/* Editable Form or Static Info */}
           <div className="space-y-2">
             {isEditing ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -141,12 +167,11 @@ const PatientCard = () => {
           </div>
         </div>
 
-        {/* Button Section */}
         <div className="flex flex-wrap gap-4 mt-5 ml-20">
           <button
-            onClick={() => setAppointment(false)}
+            onClick={() => setAppointmentView(false)}
             className={`px-6 py-3 rounded-3xl shadow-lg font-semibold ${
-              !appointment
+              !appointmentView
                 ? 'bg-red-700 text-white'
                 : 'bg-red-600 text-white hover:bg-red-700'
             }`}
@@ -154,9 +179,9 @@ const PatientCard = () => {
             Medical Records
           </button>
           <button
-            onClick={() => setAppointment(true)}
+            onClick={() => setAppointmentView(true)}
             className={`px-9 py-3 rounded-3xl shadow-lg font-semibold ${
-              appointment
+              appointmentView
                 ? 'bg-blue-700 text-white'
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
@@ -165,21 +190,50 @@ const PatientCard = () => {
           </button>
         </div>
 
-        {/* Conditional Rendering Section */}
         <div className="w-[90%] mx-auto mt-8">
-          {!appointment ? (
+          {!appointmentView ? (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-bold mb-3">🩺 Medical Records</h2>
-              <p>Display all patient medical history, test reports, and prescriptions here.</p>
+
+              {userData && userData.appointments && userData.appointments.length > 0 ? (
+                <div className="space-y-4">
+                  {userData.appointments.map((a) => (
+                    <div key={a.id} className="p-3 border rounded">
+                      <div className="flex justify-between">
+                        <div>
+                          <div className="font-semibold">Hospital: {a.hospitalName}</div>
+                          <div className="text-sm text-gray-600">Status: {a.status}</div>
+                          <div className="text-sm text-gray-600">Total: ₹{a.total}</div>
+                        </div>
+                        <div className="text-sm text-gray-500">{new Date(a.createdAt).toLocaleString()}</div>
+                      </div>
+                      {a.reports && a.reports.length > 0 && (
+                        <div className="mt-2">
+                          <div className="font-medium">Reports:</div>
+                          <ul className="list-disc ml-5">
+                            {a.reports.map((r) => (
+                              <li key={r.id} className="text-sm">{r.text} <span className="text-xs text-gray-500">({r.addedBy} - {new Date(r.createdAt).toLocaleString()})</span></li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>Display all patient medical history, test reports, and prescriptions here.</p>
+              )}
             </div>
           ) : (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-bold mb-3">📅 Appointment Booking</h2>
-              <p>Form to book appointments will appear here.</p>
+              <p>Form to book appointments will appear here (use Hospital page to book).</p>
             </div>
           )}
         </div>
       </div>
+
+      <ToastContainer />
     </>
   );
 };

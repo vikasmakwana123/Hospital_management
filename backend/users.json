@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1762597879492",
+    "fullName": "vikas",
+    "email": "d9531097@gmail.com",
+    "phoneNo": "09324581320",
+    "address": "asdjbsbbdbbcjswnq",
+    "whatsappNo": "",
+    "password": "113124650283514a6ce884e7687714a9e4b8495c2b6d1b5944028ce080e11ba7",
+    "role": "hospital",
+    "createdAt": "2025-11-08T10:31:19.494Z",
+    "appointments": [
+      {
+        "id": "1762600641850",
+        "hospitalId": "1",
+        "hospitalName": "City Care Hospital",
+        "facilities": [
+          {
+            "id": "mri",
+            "name": "MRI",
+            "price": 4500,
+            "slot": "09:00"
+          },
+          {
+            "id": "ct",
+            "name": "CT Scan",
+            "price": 3500,
+            "slot": "09:30"
+          }
+        ],
+        "total": 8000,
+        "status": "pending",
+        "createdAt": "2025-11-08T11:17:21.850Z",
+        "reports": [],
+        "slot": "11:00",
+        "date": "2025-01-12"
+      },
+      {
+        "id": "1762600669347",
+        "hospitalId": "1",
+        "hospitalName": "City Care Hospital",
+        "facilities": [
+          {
+            "id": "mri",
+            "name": "MRI",
+            "price": 4500,
+            "slot": "10:30"
+          },
+          {
+            "id": "ct",
+            "name": "CT Scan",
+            "price": 3500,
+            "slot": "11:00"
+          }
+        ],
+        "total": 8000,
+        "status": "pending",
+        "createdAt": "2025-11-08T11:17:49.347Z",
+        "reports": []
+      }
+    ]
+  },
+  {
+    "id": "1762675102385",
+    "fullName": "Vikas makwana",
+    "email": "vikasmakwana55555@gmail.com",
+    "phoneNo": "12345678",
+    "address": "ojdhabnbdvn",
+    "whatsappNo": "",
+    "password": "ac3aa8e121a50a99ffa052769f00559c62c3f9064f9418b95b09d5880a085c17",
+    "role": "hospital",
+    "createdAt": "2025-11-09T07:58:22.385Z"
+  }
+]

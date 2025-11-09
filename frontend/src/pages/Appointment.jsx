@@ -2,6 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import hospitals from '../data/hospitals';
 import { useUser } from '../context/UserContext'; // ✅ Import user context
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { fetchWithErrorHandling } from '../utils/api';
 
 const Appointment = () => {
   const { id } = useParams();
@@ -53,20 +56,37 @@ const Appointment = () => {
   const total = selectedFacilities.reduce((sum, f) => sum + Number(f.price || 0), 0);
 
   // ✅ Booking Handler with Login Check
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (!user) {
       alert('You must log in before booking an appointment.');
       navigate('/login'); // redirect to login page
       return;
     }
+    // Build payload
+    const payload = {
+      hospitalId: hospital.id,
+      hospitalName: hospital.name,
+      facilities: selectedFacilities.map((f) => ({ id: f.id, name: f.name, price: f.price, slot: selectedSlot[f.id] })),
+      total,
+    };
 
-    alert(
-      `✅ Appointment Confirmed!\n\n${selectedFacilities.length} test(s) booked for ₹${total} at ${hospital.name}.\n\nPatient: ${user.name}`
-    );
+    try {
+      // No need to stringify the payload, fetchWithErrorHandling will do it
+      await fetchWithErrorHandling(`/api/users/${user.id}/appointments`, {
+        method: 'POST',
+        body: payload, // Send the payload directly
+      });
+      toast.success('Appointment booked successfully!');
+      navigate('/patient');
+    } catch (err) {
+      console.error('Error booking appointment:', err);
+      toast.error(err.message || 'Failed to book appointment. Please try again.');
+    }
   };
 
   return (
     <div className="p-6 md:p-10 flex flex-col md:flex-row gap-6">
+      <ToastContainer />
       {/* Hospital Info Section */}
       <div className="flex-1">
         <div className="mb-4">
